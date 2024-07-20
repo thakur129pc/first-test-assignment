@@ -25,6 +25,8 @@ const Page = () => {
   const PagesList = ["Page 1", "Page 2", "Page 3", "Page 4"];
   // State for managing "All" checkbox
   const [allCheck, setAllCheck] = useState(false);
+  // State to save selected pages
+  const [selectedPages, setSelectedPages] = useState([]);
   // Combined State to manage the list of pages
   const [pagesStates, setPagesStates] = useState(
     PagesList.reduce((acc, page) => ({ ...acc, [page]: false }), {})
@@ -57,10 +59,10 @@ const Page = () => {
 
   // Function to handle "Done" button
   const handleSubmit = () => {
-    const selectedPages = Object.keys(pagesStates).filter(
-      (key) => pagesStates[key] === true
+    // To fetch and set the selected pages
+    setSelectedPages(
+      Object.keys(pagesStates).filter((key) => pagesStates[key] === true)
     );
-    console.log("Selected Pages:", selectedPages);
   };
 
   useEffect(() => {
@@ -78,45 +80,55 @@ const Page = () => {
   }, [pagesStates]);
 
   return (
-    <div className="container">
-      <label htmlFor="all" className="checkbox-item">
-        <div>All pages</div>
-        <input
-          id="all"
-          className="displayHidden"
-          type="checkbox"
-          checked={allCheck}
-          onChange={(e) => selectAllPages(e.target.checked)}
-        />
-        <span className="checkmark">
-          <TickIcon />
-        </span>
-      </label>
-      <hr />
-      {/* List of all the pages */}
-      {PagesList.map((page) => (
-        <label
-          key={page}
-          htmlFor={page.split(" ").join("")}
-          className="checkbox-item"
-        >
-          <div>{page}</div>
+    <div className="pageDiv">
+      <div className="container">
+        <label htmlFor="all" className="checkbox-item">
+          <div>All pages</div>
           <input
-            id={page.split(" ").join("")}
+            id="all"
             className="displayHidden"
             type="checkbox"
-            checked={pagesStates[page]}
-            onChange={() => handlePageCheckbox(page)}
+            checked={allCheck}
+            onChange={(e) => selectAllPages(e.target.checked)}
           />
           <span className="checkmark">
             <TickIcon />
           </span>
         </label>
-      ))}
-      <hr />
-      <button className="done-button" onClick={() => handleSubmit()}>
-        Done
-      </button>
+        <hr />
+        {/* List of all the pages */}
+        {PagesList.map((page) => (
+          <label
+            key={page}
+            htmlFor={page.split(" ").join("")}
+            className="checkbox-item"
+          >
+            <div>{page}</div>
+            <input
+              id={page.split(" ").join("")}
+              className="displayHidden"
+              type="checkbox"
+              checked={pagesStates[page]}
+              onChange={() => handlePageCheckbox(page)}
+            />
+            <span className="checkmark">
+              <TickIcon />
+            </span>
+          </label>
+        ))}
+        <hr />
+        {/* Button */}
+        <button className="done-button" onClick={() => handleSubmit()}>
+          Done
+        </button>
+      </div>
+      {/* To show selected pages */}
+      <div style={{ marginTop: "15px" }}>
+        <b>Selected Pages: </b>
+        {selectedPages.length > 0
+          ? selectedPages.join(", ")
+          : "No page selected"}
+      </div>
     </div>
   );
 };
